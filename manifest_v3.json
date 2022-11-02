@@ -1,0 +1,34 @@
+{
+    "manifest_version": 3,
+    "name": "Shadertoy Exporter",
+    "version": "0.2.7.0",
+    "description": "High quality frame and video export from Shadertoy",
+    "icons": {
+        "128": "icon.png"
+    },
+    "author": "tdhooper",
+    "homepage_url": "https://github.com/tdhooper/shadertoy-frame-exporter",
+    "permissions": [
+        "scripting",
+        "storage",
+        "downloads"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["https://www.shadertoy.com/view/*"],
+            "js": ["inject.js","lib/ffmpeg/ffmpeg.min.js", "lib/ffmpeg/ffmpeg-core.js"],
+            "css": ["styles.css"]
+        }
+    ],
+    "web_accessible_resources": [{
+        "resources": [
+            "main.js",
+            "lib/FileSaver-2.0.4.min.js",
+            "lib/ffmpeg/ffmpeg-core.js",
+            "lib/ffmpeg/ffmpeg-core.wasm",
+            "lib/ffmpeg/ffmpeg-core.worker.js",
+            "lib/ffmpeg/ffmpeg.min.js"
+        ],
+        "matches": ["https://www.shadertoy.com/*"]
+    }]
+}
