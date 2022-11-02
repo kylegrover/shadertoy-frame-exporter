@@ -65,6 +65,7 @@ FrameExporter.prototype.disablePreview = function() {
 FrameExporter.prototype.startRecording = function() {
     this.record = true;
     this.frameUpdated = true;
+    this.zip = new JSZip();
 
     // Start frame counter
     this.frameCounter = new FrameCounter(this.fpsInput.value, this.secondsInput.value);
@@ -175,15 +176,18 @@ FrameExporter.prototype.render = function(original_render) {
     }
 
     if (this.record) {
-
         if (this.frameUpdated) {
 
             this.frameUpdated = false;
             original_render();
 
-            this.saveFrame(gShaderToy.mCanvas, function() {
+            this.saveFrame(gShaderToy.mCanvas, this.zip, function() {
                 this.frameCounter.incrementFrame();
                 if (this.frameCounter.looped) {
+                    this.zip.generateAsync({type:"blob"})
+                    .then(function(content) {
+                        saveAs(content, "shadertoy-frames.zip");
+                    });
                     this.stopRecording();
                 }
                 this.frameUpdated = true;
@@ -254,11 +258,12 @@ FrameExporter.prototype.createUi = function() {
     this.addClass(this.controls, 'sfe-controls');
     this.insertAfter(this.controls, this.player);
 
-    this.widthInput = this.createInput('width', 'number', 500);
-    this.heightInput = this.createInput('height', 'number', 500);
+    this.widthInput = this.createInput('width', 'number', 960);
+    this.heightInput = this.createInput('height', 'number', 540);
     this.fpsInput = this.createInput('fps', 'number', 30);
     this.secondsInput = this.createInput('seconds', 'number', 1);
-    this.prefixInput = this.createInput('prefix', 'text', 'img');
+    this.shaderID = document.location.pathname.replace("/view/","");
+    this.prefixInput = this.createInput('prefix', 'text', `${this.shaderID}_frame`);
 
     var previewInput = this.createInput('preview', 'checkbox');
     previewInput.addEventListener('click', function() {
@@ -326,14 +331,17 @@ FrameExporter.prototype.createInput = function(name, type, value) {
 /* Utilities
    ========================================================================== */
 
-FrameExporter.prototype.saveFrame = function(canvas, done) {
+FrameExporter.prototype.saveFrame = function(canvas, zip, done) {
     var totalFrames = this.frameCounter.totalFrames;
     var digits = totalFrames.toString().length;
     var frameString = this.pad(this.frameCounter.frameNumber, digits);
     var filename = this.prefix + frameString + '.png';
     canvas.toBlob(function(blob) {
-        saveAs(blob, filename);
+        console.log(zip)
+        zip.file(filename, blob); // , {base64: true}
+        // saveAs(blob, filename);
         setTimeout(done, 100);
+        return zip;
     });
 };
 
