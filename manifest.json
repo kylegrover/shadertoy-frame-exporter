@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "Shadertoy frame exporter",
-    "version": "0.2.6",
-    "description": "High quality timed frame export from Shadertoy",
+    "name": "Shadertoy Exporter",
+    "version": "0.2.7.0",
+    "description": "High quality frame and video export from Shadertoy",
     "icons": {
         "128": "icon.png"
     },
@@ -11,12 +11,21 @@
     "content_scripts": [
         {
             "matches": ["https://www.shadertoy.com/view/*"],
-            "js": ["inject.js"],
+            "js": [
+                "lib/ffmpeg/ffmpeg.min.js", 
+                "lib/ffmpeg/ffmpeg-core.js", 
+                "inject.js"
+            ],
             "css": ["styles.css"]
         }
     ],
     "web_accessible_resources": [
         "main.js",
-        "lib/FileSaver-2.0.4.min.js"
+        "lib/FileSaver-2.0.4.min.js",
+        "lib/ffmpeg/ffmpeg-core.js",
+        "lib/ffmpeg/ffmpeg-core.wasm",
+        "lib/ffmpeg/ffmpeg-core.worker.js",
+        "lib/ffmpeg/ffmpeg.min.js",
+        "lib/ffmpeg/ffmpeg.min.js.map"
     ]
 }

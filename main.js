@@ -1,4 +1,41 @@
+const { createFFmpeg, fetchFile } = FFmpeg;
+const ffmpeg = createFFmpeg({
+  log: true,
+  corePath: ffmpegcore_url,
+});
 
+const image2video = async () => {
+    console.log('Loading ffmpeg-core.js');
+    await ffmpeg.load();
+    console.log('Loading data');
+    // ffmpeg.FS('writeFile', 'audio.ogg', await fetchFile('../assets/triangle/audio.ogg'));
+    for (let i = 0; i < 60; i += 1) {
+      const num = `00${i}`.slice(-3);
+      ffmpeg.FS('writeFile', `tmp.${num}.png`, await fetchFile(`../assets/triangle/tmp.${num}.png`));
+    }
+    console.log('Start transcoding');
+    await ffmpeg.run(
+        '-framerate', '30', 
+        '-pattern_type', 'glob', 
+        '-i', '*.png', 
+        '-i', 'audio.ogg', 
+        '-c:a', 'copy', 
+        '-shortest', '-c:v', 
+        'libx264', '-pix_fmt', 
+        'yuv420p', 'out.mp4'
+      );
+    const data = ffmpeg.FS('readFile', 'out.mp4');
+    // ffmpeg.FS('unlink', 'audio.ogg')
+    for (let i = 0; i < 60; i += 1) {
+      const num = `00${i}`.slice(-3);
+      ffmpeg.FS('unlink', `tmp.${num}.png`);
+    }
+
+    const video = document.getElementById('output-video');
+    video.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+}
+
+// FrameExporter: 
 var FrameExporter = function() {
     this.player = document.getElementById('player');
     this.wrapper = this.player.parentNode;
