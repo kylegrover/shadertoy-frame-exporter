@@ -27,5 +27,11 @@
         "lib/ffmpeg/ffmpeg-core.worker.js",
         "lib/ffmpeg/ffmpeg.min.js",
         "lib/ffmpeg/ffmpeg.min.js.map"
-    ]
+    ],
+    "cross_origin_embedder_policy": {
+        "value": "require-corp"
+    },
+    "cross_origin_opener_policy": {
+        "value": "same-origin"
+    }
 }
