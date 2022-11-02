@@ -341,7 +341,6 @@ FrameExporter.prototype.saveFrame = function(canvas, zip, done) {
         zip.file(filename, blob); // , {base64: true}
         // saveAs(blob, filename);
         setTimeout(done, 100);
-        return zip;
     });
 };
 
